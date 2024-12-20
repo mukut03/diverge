@@ -2,6 +2,11 @@
 
 Diverge is a journaling tool designed specifically for neurodivergent individuals to help with emotional regulation. By focusing on simplicity and clarity, Diverge provides users with a streamlined way to process and reflect on their mental states, experiences, and tasks without feeling overwhelmed.
 
+## Screenshots
+![Example Entry](usage/images/entry.png)
+![Example Response](usage/images/response.png)
+
+
 ## Features
 - **Emotional Regulation**: Identifies complex emotions, causes, and triggers expressed in the entry, providing opportunities for effective cognitive reappraisal.
 - **Streamlined Input and Output**: Avoids excessive outputs and complexity, ensuring users receive actionable insights without additional cognitive burden.
