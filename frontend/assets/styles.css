@@ -1,0 +1,79 @@
+/* Dynamic Background */
+body {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    color: #d3d3d3; /* Soft light gray for overall text */
+}
+
+@keyframes gradientBG {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+/* Journal Title */
+.journal-title {
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #e0e0e0; /* Very soft, light gray */
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+/* Journal Description */
+.journal-description {
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    font-size: 1.1rem;
+    color: #c0c0c0; /* Slightly darker soft gray */
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* Borderless Text Box */
+textarea {
+    border: none;
+    border-radius: 1px;
+    background-color: #3a4042; /* Dark, muted background */
+    color: #e0e0e0; /* Light text for contrast */
+    padding: 15px;
+    width: 100%;
+    font-size: 1rem;
+    resize: none;
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+}
+
+textarea:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(100, 100, 100, 0.3);
+}
+
+/* Center Analyze Button */
+div.stButton > button {
+    margin: auto;
+    display: block;
+    background-color: #1e8449; /* Deeper, more muted green */
+    color: #f0f0f0;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+}
+
+div.stButton > button:hover {
+    background-color: #2ecc71; /* Slightly brighter on hover */
+}
+
+/* Adjust Column Spacing */
+.stColumn:first-child {
+    max-width: 300px;
+    padding-right: 20px;
+}
+
+/* Additional soft styling for other elements */
+.stMarkdown, .stText {
+    color: #d3d3d3;
+}
