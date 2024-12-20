@@ -55,13 +55,13 @@ To run Diverge on your local machine, follow these steps:
    python src/main.py
    ```
 
-6**Launch the Frontend**:
+6.  **Launch the Frontend**:
    Start the Streamlit application:
    ```bash
    streamlit run frontend/streamlit_app.py
    ```
 
-7**Access the Application**:
+7.  **Access the Application**:
    Open your browser and navigate to `http://localhost:8501` to start using Diverge.
 
 ## Contributing
