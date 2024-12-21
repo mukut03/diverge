@@ -1,36 +1,51 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from src.services import analyze_journal_entry
-from src.models import JournalRequest, JournalAnalysis
+from fastapi import FastAPI, HTTPException, Depends
+from src.models import JournalRequest, JournalResponse
+from sqlalchemy.orm import Session
+from src.services import analyze_journal_entry, save_entry, get_all_entries
+from src.database import SessionLocal, init_db
 
-app = FastAPI(
-    title="Diverge",
-    description="Journaling with LLMs for neurodivergent users",
-    version="1.0.0"
-)
+# Initialize database
+init_db()
 
-# CORS Configuration
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# FastAPI app
+app = FastAPI()
+
+# Dependency for database session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
-@app.post("/analyze", response_model=JournalAnalysis)
-async def process_journal_entry(request: JournalRequest):
+
+@app.post("/analyze", response_model=JournalResponse)
+async def process_journal_entry(request: JournalRequest, db: Session = Depends(get_db)):
     """
-    Endpoint to analyze a journal entry.
-
-    Args:
-        request (JournalRequest): The journal entry request.
-
-    Returns:
-        JournalAnalysis: Emotional analysis and insights.
+    Process a journal entry and return structured analysis.
     """
     try:
-        return analyze_journal_entry(request.entry)
+        # Analyze the entry
+        result = analyze_journal_entry(request.entry)
+
+        # Save the result in the database
+        save_entry(db, request.entry, result)
+
+        # Return the structured response
+        return result
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/entries")
+async def get_entries(db: Session = Depends(get_db)):
+    """
+    Fetch all stored journal entries.
+    """
+    try:
+        entries = get_all_entries(db)
+        return entries
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
