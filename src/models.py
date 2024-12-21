@@ -28,5 +28,5 @@ class JournalResponse(BaseModel):
     reflection: str
 
 
-# class JournalRequest(BaseModel):
-#     entry: str
+class JournalPrompts(BaseModel):
+    prompts: list[str]
