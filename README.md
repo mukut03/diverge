@@ -9,13 +9,15 @@ Diverge is a journaling tool designed specifically for neurodivergent individual
 
 ## Features
 - **Emotional Regulation**: Identifies complex emotions, causes, and triggers expressed in the entry, providing opportunities for effective cognitive reappraisal.
+- **Personalized Prompts**: Generates journaling prompts for users, based on their three most recent entries.
+- **Export Entries and Reports**: All entries and their reports are persisted locally. User can export all entries + reports to date into a CSV. 
 - **Streamlined Input and Output**: Avoids excessive outputs and complexity, ensuring users receive actionable insights without additional cognitive burden.
 - **AI-Powered Analysis**: Powered by a Llama 3.2 7b, running locally on Ollama, to ensure privacy and responsiveness.
 - **Minimalist Frontend**: Built with Streamlit, providing a clean and intuitive interface.
 
 ## How It Works
 1. **Input**: Users write candid journal entries about their thoughts, feelings, or experiences.
-2. **Processing**: The Llama 3.2 model processes the input, identifies key themes, and generates a concise summary and reflection.
+2. **Processing**: The Llama 3.2 model processes the input, identifies emotions, contexts and triggers, along with opportunities for effective cognitive reappraisal.
 3. **Output**: The user receives feedback that emphasizes emotional clarity and self-compassion, helping them better understand their mental states.
 
 ## Why Diverge?
@@ -28,6 +30,7 @@ Diverge is built with the needs of neurodivergent individuals in mind, offering:
 - **Backend**: fastAPI and python3.11.
 - **Frontend**: Streamlit for an interactive and accessible user interface.
 - **Local LLM**: Ensures privacy and data security by processing everything locally.
+- **Local DB**: sqlite 
 
 ## Installation
 To run Diverge on your local machine, follow these steps:
