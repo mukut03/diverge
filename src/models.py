@@ -12,6 +12,21 @@ class JournalAnalysis(BaseModel):
     """
     Output model for journal entry analysis.
     """
-    analysis: str
-    emotions: list[str] = Field(default_factory=list, title="Detected Emotions")
-    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    emotions: list[str]
+    context: str
+    needs: list[str]
+    action_plan: list[str]
+    reflection: str
+
+
+# Response Model
+class JournalResponse(BaseModel):
+    emotions: list[str]
+    context: str
+    needs: list[str]
+    action_plan: list[str]
+    reflection: str
+
+
+# class JournalRequest(BaseModel):
+#     entry: str
