@@ -24,3 +24,9 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def init_db():
     Base.metadata.create_all(bind=engine)
+
+def get_recent_entries(db: SessionLocal, limit: int = 3):
+    """
+    Fetches the most recent journal entries from the database.
+    """
+    return db.query(JournalEntry).order_by(JournalEntry.id.desc()).limit(limit).all()
