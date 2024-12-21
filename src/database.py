@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, JSON
+from sqlalchemy import create_engine, Column, Integer, String, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -10,11 +10,15 @@ class JournalEntry(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     entry = Column(String, nullable=False)
-    analysis = Column(String, nullable=False)
     emotions = Column(JSON, nullable=False)
+    context = Column(String, nullable=False)
+    needs = Column(JSON, nullable=False)
+    action_plan = Column(JSON, nullable=False)
+    reflection = Column(String, nullable=False)
 
 # Initialize SQLite database
-DATABASE_URL = "sqlite:///./journal.db"
+DATABASE_URL = "sqlite:///./db/journal.db"
+
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
