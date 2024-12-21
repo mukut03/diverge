@@ -1,9 +1,9 @@
 import requests
 import logging
 from src.config import settings
-from src.prompts import generate_user_prompt, generate_system_prompt
-from src.models import JournalAnalysis
-from src.database import SessionLocal, JournalEntry
+from src.prompts import generate_user_prompt, generate_system_prompt, generate_prompt_entry
+from src.models import JournalAnalysis, JournalPrompts
+from src.database import SessionLocal, JournalEntry, get_recent_entries
 from sqlalchemy.orm import Session
 from pydantic import ValidationError
 
@@ -81,3 +81,53 @@ def analyze_journal_entry(entry: str) -> JournalAnalysis:
     except Exception as e:
         logging.error(f"Analysis error: {e}")
         raise RuntimeError("Failed to analyze the journal entry") from e
+
+
+def generate_journal_prompts() -> list[str]:
+    """
+    Generates journal prompts based on the most recent entries.
+
+    Returns:
+        list[str]: A list of suggested prompts.
+    """
+
+    db = SessionLocal()
+
+    # Fetch the 3 most recent entries
+    recent_entries = get_recent_entries(db, limit=3)
+
+    if len(recent_entries) < 3:
+        return []  # Not enough entries for prompts
+
+    # Combine entries and analyses into a single string
+    context = "\n\n".join(
+        [f"Entry: {e.entry}\nAnalysis: {e.context}" for e in recent_entries]
+    )
+
+    # Prepare the prompt for suggestions
+    system_prompt = generate_prompt_entry()
+
+    # Request prompts from the LLM
+    try:
+        data = {
+            "model": settings.OLLAMA_MODEL,
+            "prompt": f"{system_prompt}\n{context}",
+            "format": "json",  # Enforce structured output as JSON
+            "stream": False
+        }
+
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        # Make API call
+        response = requests.post(settings.OLLAMA_URL, headers=headers, json=data)
+        response.raise_for_status()
+
+        # Parse response into a list of prompts
+        suggestions = JournalPrompts.model_validate_json(response.json()["response"])
+        return suggestions
+
+    except Exception as e:
+        logging.error(f"Prompt generation error: {e}")
+        return []
