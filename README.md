@@ -12,7 +12,7 @@ Diverge is a journaling tool designed specifically for neurodivergent individual
 - **Personalized Prompts**: Generates journaling prompts for users, based on their three most recent entries.
 - **Export Entries and Reports**: All entries and their reports are persisted locally. User can export all entries + reports to date into a CSV. 
 - **Streamlined Input and Output**: Avoids excessive outputs and complexity, ensuring users receive actionable insights without additional cognitive burden.
-- **AI-Powered Analysis**: Powered by a Llama 3.2 7b, running locally on Ollama, to ensure privacy and responsiveness.
+- **AI-Powered Analysis**: Powered by a Llama 3.2 7b, running locally on Ollama, to ensure privacy and responsiveness. Free of cost and not part of the daily LLM carbon footprint (ChatGPT emits approx. 43,200 kilograms of CO2 each day)
 - **Minimalist Frontend**: Built with Streamlit, providing a clean and intuitive interface.
 
 ## How It Works
