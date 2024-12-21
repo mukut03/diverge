@@ -1,50 +1,41 @@
 import requests
 import logging
 from src.config import settings
-from src.prompts import generate_analysis_prompt
+from src.prompts import generate_user_prompt, generate_system_prompt
 from src.models import JournalAnalysis
+from src.database import SessionLocal, JournalEntry
+from sqlalchemy.orm import Session
+from pydantic import ValidationError
 
 
-def call_llama(prompt: str) -> str:
+def save_entry(db: Session, entry: str, analysis: JournalAnalysis):
     """
-    Calls the Ollama API with the given prompt and retrieves the response.
-
-    Args:
-        prompt (str): The input prompt for the Ollama model.
-
-    Returns:
-        str: The content of the response message.
+    Saves the journal entry and structured analysis to the database.
     """
-    url = settings.OLLAMA_URL  # URL defined in config.py
+    db_entry = JournalEntry(
+        entry=entry,
+        emotions=analysis.emotions,
+        context=analysis.context,
+        needs=analysis.needs,
+        action_plan=analysis.action_plan,
+        reflection=analysis.reflection,
+    )
+    db.add(db_entry)
+    db.commit()
+    db.refresh(db_entry)
+    return db_entry
 
-    data = {
-        "model": settings.OLLAMA_MODEL,  # Llama model name (e.g., "llama2" or "llama3")
-        "messages": [
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        "stream": False,  # We don't need streaming for this use case
-    }
 
-    headers = {
-        "Content-Type": "application/json"
-    }
-
-    try:
-        response = requests.post(url, headers=headers, json=data)
-        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
-        return response.json()["message"]["content"]
-
-    except requests.exceptions.RequestException as e:
-        logging.error(f"Error calling Ollama API: {e}")
-        raise RuntimeError("Failed to communicate with the Ollama API") from e
+def get_all_entries(db: Session):
+    """
+    Fetches all journal entries from the database.
+    """
+    return db.query(JournalEntry).all()
 
 
 def analyze_journal_entry(entry: str) -> JournalAnalysis:
     """
-    Analyzes the journal entry using the Llama model.
+    Analyzes the journal entry using the Llama model with structured outputs.
 
     Args:
         entry (str): The journal entry to analyze.
@@ -53,18 +44,39 @@ def analyze_journal_entry(entry: str) -> JournalAnalysis:
         JournalAnalysis: Structured analysis response.
     """
     try:
-        # Generate the structured prompt for analysis
-        prompt = generate_analysis_prompt(entry)
+        # Prepare prompts
+        system_prompt = generate_system_prompt()
+        user_prompt = generate_user_prompt(entry)
 
-        # Call the Ollama model with the generated prompt
-        analysis_response = call_llama(prompt)
+        # Prepare the request payload
+        data = {
+            "model": settings.OLLAMA_MODEL,
+            "prompt": f"{system_prompt}\n{user_prompt}",
+            "format": "json",  # Enforce structured output
+            "stream": False
+        }
 
-        # Process the response (you can add more sophisticated parsing if needed)
-        return JournalAnalysis(
-            analysis=analysis_response,
-            emotions=["uncertainty", "reflection"],  # Replace with dynamic values if parsing is added
-            confidence=0.85  # Replace with actual confidence if provided
-        )
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        # Make the API call
+        response = requests.post(settings.OLLAMA_URL, headers=headers, json=data)
+        response.raise_for_status()  # Handle HTTP errors
+
+        # Parse and validate the response using Pydantic
+        structured_response = JournalAnalysis.model_validate_json(response.json()["response"])
+        return structured_response
+
+    except ValidationError as ve:
+        # Handle schema validation errors
+        logging.error(f"Schema validation error: {ve}")
+        raise RuntimeError("Response did not match the expected schema.") from ve
+
+    except requests.exceptions.RequestException as e:
+        # Handle network or API call errors
+        logging.error(f"Error calling Ollama API: {e}")
+        raise RuntimeError("Failed to communicate with the Ollama API") from e
 
     except Exception as e:
         logging.error(f"Analysis error: {e}")
