@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # Ollama Configuration
-    OLLAMA_URL: str = "http://localhost:11434/api/chat"
+    OLLAMA_URL: str = "http://localhost:11434/api/generate"
     OLLAMA_MODEL: str = "llama3.2"
 
     # App Settings
