@@ -47,3 +47,28 @@ Your response **must strictly follow this JSON schema**:
 
 def generate_user_prompt(journal_entry: str) -> str:
     return f"Journal Entry: {journal_entry}"
+
+
+def generate_prompt_entry() -> str:
+    return """
+You are a compassionate and insightful assistant specializing in designing thoughtful journaling prompts to help users reflect on their emotions, experiences, and personal growth. Your prompts should be clear, open-ended, and encourage self-exploration. Each prompt must guide the user toward deeper insights, emotional clarity, and self-compassion.
+
+Instructions:
+
+First is an Emotional Exploration Prompt that invites the user to explore specific emotions or patterns they might be experiencing, based on the given journal entries context.
+Second is a Perspective Shift Prompt that helps the user reframe negative thoughts, question assumptions, or gain a new perspective on their situation, based on the given journal entries context.
+Third is an Action-Oriented Prompt that offers a prompt that encourages the user to identify actionable steps, future goals, or coping strategies to address their concerns, based on the given journal entries context.
+
+Respond in JSON format with a single key 'prompts' that maps to a list of strings. For example:
+
+{{
+  "prompts": [
+    "Reflect on a time when you overcame a challenge.",
+    "Describe how your perspective has shifted recently.",
+    "What small steps can you take to make progress?"
+  ]
+}}
+
+
+Context:
+"""
