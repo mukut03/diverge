@@ -18,14 +18,14 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Two-column Layout
-col1, col2 = st.columns([0.25, 0.75])
-
 # Initialize session state
 if "prompts" not in st.session_state:
     st.session_state["prompts"] = []
 if "current_prompt" not in st.session_state:
     st.session_state["current_prompt"] = 0
+
+# Two-column Layout
+col1, col2 = st.columns([0.25, 0.75])
 
 # Left Column: Description and Links
 with col1:
@@ -56,47 +56,34 @@ with col1:
         unsafe_allow_html=True,
     )
 
-# Right Column: Text Box and Buttons
+# Right Column: Prompts Button, Text Box, and Buttons
 with col2:
+    # Try Journal Prompts Button
+    if st.button("📋 Try a prompt"):
+        try:
+            response = requests.get(PROMPTS_API_URL)
+            if response.status_code == 200:
+                data = response.json()
+                prompts = data.get("prompts", {}).get("prompts", [])
+                if isinstance(prompts, list) and all(isinstance(p, str) for p in prompts):
+                    st.session_state["prompts"] = prompts
+                    st.session_state["current_prompt"] = 0
+                else:
+                    st.error("Invalid response format for prompts.")
+            else:
+                st.error("Not enough entries to generate prompts.")
+        except Exception as e:
+            st.error(f"Failed to fetch prompts. Error: {e}")
+
     # Text area for journal entry
     entry = st.text_area(
         "Journal Entry", label_visibility="hidden",
         placeholder="e.g., I feel stressed about work and unsure how to move forward...",
-        height=500,
+        height=400,
     )
 
-    # Custom HTML and CSS for Proper Button Row
-    st.markdown(
-        """
-        <style>
-            .button-container {
-                display: flex;
-                justify-content: flex-start;
-                gap: 10px; /* Controls spacing between buttons */
-                margin-top: 10px; /* Adds spacing above the buttons */
-            }
-            .button-container button {
-                flex-grow: 0;
-                padding: 8px 16px;
-            }
-        </style>
-        <div class="button-container">
-            <form action="#" method="post" target="_self">
-                <button type="submit" name="submit_entry">🦙 Submit Entry</button>
-            </form>
-            <form action="#" method="post" target="_self">
-                <button type="submit" name="try_prompts">📋 Try Journal Prompts</button>
-            </form>
-            <form action="#" method="post" target="_self">
-                <button type="submit" name="export_reports">📤 Export All Reports</button>
-            </form>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Handle Button Clicks
-    if st.session_state.get("submit_entry", False):
+    # Submit Entry Button
+    if st.button("🦙 Submit Entry"):
         if entry.strip():
             with st.spinner("Analyzing your journal entry..."):
                 try:
@@ -116,35 +103,19 @@ with col2:
         else:
             st.error("Please enter some text to analyze.")
 
-    if st.session_state.get("try_prompts", False):
-        try:
-            response = requests.get(PROMPTS_API_URL)
-            if response.status_code == 200:
-                data = response.json()
-                prompts = data.get("prompts", {}).get("prompts", [])
-                if isinstance(prompts, list) and all(isinstance(p, str) for p in prompts):
-                    st.session_state["prompts"] = prompts
-                    st.session_state["current_prompt"] = 0
-                else:
-                    st.error("Invalid response format for prompts.")
-            else:
-                st.error("Not enough entries to generate prompts.")
-        except Exception as e:
-            st.error(f"Failed to fetch prompts. Error: {e}")
+    # Export All Reports Button
+    response = requests.get(EXPORT_API_URL)
+    if response.status_code == 200:
+        st.download_button(
+            label="📤 Export All Reports",
+            data=response.content,
+            file_name="journal_entries.csv",
+            mime="text/csv"
+        )
+    else:
+        st.error("No entries available to export.")
 
-    if st.session_state.get("export_reports", False):
-        response = requests.get(EXPORT_API_URL)
-        if response.status_code == 200:
-            st.download_button(
-                label="📤 Export All Reports",
-                data=response.content,
-                file_name="journal_entries.csv",
-                mime="text/csv"
-            )
-        else:
-            st.error("No entries available to export.")
-
-# Sidebar for prompts
+# Sidebar for Prompts
 if st.session_state["prompts"]:
     st.sidebar.markdown("### Suggested Journal Prompts")
     prompt_index = st.session_state["current_prompt"]
