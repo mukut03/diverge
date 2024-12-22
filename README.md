@@ -57,20 +57,13 @@ To run Diverge on your local machine, follow these steps:
 4. **Start Ollama**:
    Install Ollama and start Llama 3.2.
 
-5.  **Launch the Backend**:
-   Start the fastAPI application:
+5.  **Launch Diverge in your browser**:
    ```bash
-   python src/main.py
+   python diverge.py
    ```
-
-6.  **Launch the Frontend**:
-   Start the Streamlit application:
-   ```bash
-   streamlit run frontend/streamlit_app.py
-   ```
-
-7.  **Access the Application**:
-   Open your browser and navigate to `http://localhost:8501` to start using Diverge.
+   
+6. **Access the Application**:
+   If browser does not open, navigate to `http://localhost:8501` to start using Diverge.
 
 ## Contributing
 Contributions are welcome. Journaling is one way to practice emotional regulation with local llms. If you have ideas for features or want to improve the existing code, please submit a pull request or open an issue in the repository.
