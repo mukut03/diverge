@@ -38,7 +38,7 @@ To run Diverge on your local machine, follow these steps:
 
 ### Option 1: Using the Executable
 1. **Download Executable**:
-   Download the pre-built executable from the repository or releases page.
+   Download the pre-built executable from the releases page.
 
 2. **Run the Executable**:
    ```bash
@@ -51,7 +51,7 @@ To run Diverge on your local machine, follow these steps:
 ### Option 2: Build from Source
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/yourusername/diverge.git
+   git clone https://github.com/mukut03/diverge.git
    cd diverge
    ```
 
