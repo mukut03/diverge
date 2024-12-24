@@ -40,10 +40,13 @@ To run Diverge on your local machine, follow these steps:
 1. **Download Executable**:
    Download the pre-built executable from the releases page.
 
-2. **Run the Executable**:
+2. **Run the Executable (macOS)**:
    ```bash
-   ./dist/diverge
+   cd <path/to/diverge1.0.0>
+   sudo chmod +x ./diverge1.0.0
+   ./diverge1.0.0
    ```
+   Note: Needs to run Ollama with Llama3.2 
 
 3. **Access the Application**:
    Navigate to `http://localhost:8501` to start using Diverge.
